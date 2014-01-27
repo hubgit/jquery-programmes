@@ -50,12 +50,18 @@ $(function() {
 		});
 	};
 
+	var player;
+
 	var playTrack = function(event) {
 		event.preventDefault();
 
 		var track = $(event.target).closest('[itemscope]');
 
-		var player = window.tomahkAPI.Track(track.microdata('byArtist'), track.microdata('name'), {
+		if (player) {
+			player.pause();
+		}
+
+		player = window.tomahkAPI.Track(track.microdata('byArtist'), track.microdata('name'), {
 		    width: 300,
 		    height: 300,
 		    disabledResolvers: [],
@@ -67,6 +73,7 @@ $(function() {
 		});
 
 		track.find('.tomahk').html(player.render());
+		player.play();
 	};
 
 	fetchBrands();
