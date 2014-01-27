@@ -1,43 +1,44 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>jQuery Programmes</title>
+<title>Angular Programmes</title>
 
 <link rel="stylesheet" href="demo.css">
-<link rel="stylesheet" href="track.css">
+<link rel="stylesheet" href="episode.css">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script src="http://git.macropus.org/jquery-ajax-queue/jquery.ajaxQueue.js"></script>
-<script src="http://git.macropus.org/jquery-microdata/jquery.microdata.js"></script>
-<script src="http://toma.hk/api.js?v=1"></script>
-<script src="lib/handlebars.js"></script>
-<script src="../jquery.programmes.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-resource.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-sanitize.js"></script>
 <script src="demo.js"></script>
 
-<div id="status"></div>
+<body ng-app="bbcPlayerApp">
+	<div id="programmes" ng-controller="programmesListController">
+		<ul>
+			<li ng-repeat="programme in programmes"
+				ng-click="programmeSelected(programme);">{{programme.title}}</a>
+		</ul>
+	</div>
 
-<div id="main">
-	<div id="programmes"></div>
-	<div id="episode"></div>
-</div>
-
-<script id="episode-template" type="text/x-handlebars-template">
-	<article itemscope itemtype="http://schema.org/Episode">
-		<div itemprop="name">{{ episode.display_title.title }}</div>
-		<div itemprop="name">{{ episode.display_title.subtitle }}</div>
-		<ol itemprop="tracklist" itemscope itemtype="http://schema.org/MusicPlaylist">
-			{{#each segment_events}}{{> segment}}{{/each}}
-		</ol>
-	</article>
-</script>
+	<div id="episode" ng-controller="episodeController">
+		<article itemscope itemtype="http://schema.org/Episode">
+			<div itemprop="name">{{ episode.display_title.title }}</div>
+			<div>{{ episode.display_title.subtitle }}</div>
 
 
-<script id="segment-template" type="text/x-handlebars-template">
-	<li itemprop="track" itemscope itemtype="http://schema.org/MusicRecording">
-		<div>
-			<button>&#9654;</button>
-			<span itemprop="name">{{ segment.title }}</span>
-		</div>
-		<div itemprop="byArtist">{{ segment.artist }}</div>
-		<div class="tomahk"></div>
-	</li>
-</script>
+			<ol itemprop="playlist" itemscope itemtype="http://schema.org/MusicPlaylist">
+				<li itemprop="track" itemscope itemtype="http://schema.org/MusicRecording"
+					ng-repeat="segment_event in version.segment_events">
+					<div>
+						<button ng-click="trackSelected(segment_event.segment)">&#9654;</button>
+						<span itemprop="name">{{ segment_event.segment.title }}</span>
+					</div>
+
+					<div itemprop="byArtist">{{ segment_event.segment.artist }}</div>
+				</li>
+			</ol>
+		</article>
+	</div>
+
+	<div id="track" ng-controller="trackController">
+		<iframe ng-src="{{ src }}"></iframe>
+	</div>
+</body>

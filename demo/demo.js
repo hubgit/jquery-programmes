@@ -1,82 +1,66 @@
-$(function() {
-	var status = $('#status');
+var app = angular.module('bbcPlayerApp', ['ngResource']);
 
-	var template = Handlebars.compile($('#episode-template').html());
-	Handlebars.registerPartial('segment', $('#segment-template').html());
+app.controller('programmesListController', function ($scope, $http, $rootScope) {
+	var url = 'http://www.bbc.co.uk/programmes/genres/music/player.json';
 
-	var fetchBrands = function() {
-		status.text('Finding available shows…');
-		$('#programmes').empty();
+	$http.get(url).success(function(data) {
+		$scope.programmes = data.category_slice.programmes;
+	});
 
-		$.programmes.get('genres/music/player').done(function(data) {
-			status.empty();
+	$scope.programmeSelected = function(programme) {
+		$rootScope.$broadcast('programmeSelected', programme);
+	};
+});
 
-			var container = $('#programmes').empty();
+app.controller('episodeController', function ($scope, $rootScope, $resource) {
+	var service = 'http://www.bbc.co.uk/programmes/';
 
-			$.each(data.category_slice.programmes, function(i, programme) {
-				var link = $('<a/>', {
-					href: '#' + programme.pid,
-					text: programme.title
-				}).data('pid', programme.pid);
+	var Programme = $resource(service + ':pid.json', { pid: '@pid' }, {
+		getEpisodes: {
+			method: 'GET',
+			url: service + ':pid/episodes/player.json',
+		}
+	});
 
-				$('<div/>').append(link).appendTo('#programmes');
+	$rootScope.$on('programmeSelected', function(event, programme) {
+		$scope.player = null;
+		$scope.episode = null;
+		$scope.version = null;
+
+		//console.log('programme', programme);
+		var series = new Programme(programme);
+
+		// fetch episodes
+		series.$getEpisodes().then(function(data) {
+			//console.log('episodes', data);
+			var episode = new Programme(data.episodes[0].programme);
+
+			// fetch episode
+			episode.$get().then(function(data) {
+				//console.log('episode', data);
+				$scope.episode = data.programme;
+
+				var version = new Programme(data.programme.versions[0]);
+
+				// fetch version
+				version.$get().then(function(data) {
+					//console.log('version', data);
+					$scope.version = data.version;
+
+					$rootScope.$broadcast('segmentsUpdated', data.version.segment_events);
+				});
 			});
 		});
+	});
+
+	$scope.trackSelected = function(segment) {
+		$rootScope.$broadcast('trackSelected', segment);
 	};
+});
 
-	var fetchLatestEpisode = function(event) {
-		event.preventDefault();
-		$('#episode').empty();
-
-		var pid = $(event.target).data('pid');
-
-		status.text('Finding latest episode…');
-		$.programmes.get(pid + '/episodes/player').done(function(data) {
-			var pid = data.episodes[0].programme.pid;
-
-			status.text('Fetching episode details…');
-			$.programmes.get(pid).done(function(data) {
-				var episode = data.programme;
-				var pid = episode.versions[0].pid;
-
-				status.text('Fetching episode version…');
-				$.programmes.get(pid).done(function(data) {
-					status.empty();
-					data.version.episode = episode;
-					console.log(data);
-					$('#episode').html(template(data.version));
-				})
-			})
-		});
-	};
-
-	var player;
-
-	var playTrack = function(event) {
-		event.preventDefault();
-
-		var track = $(event.target).closest('[itemscope]');
-
-		if (player) {
-			player.pause();
-		}
-
-		player = window.tomahkAPI.Track(track.microdata('name'), track.microdata('byArtist'), {
-		    width: 300,
-		    height: 300,
-		    disabledResolvers: [],
-		    handlers: {
-		        onended: function() {
-		            track.next('[itemscope]').find('button').click();
-		        }
-		    }
-		});
-
-		track.find('.tomahk').html(player.render());
-		player.play();
-	};
-
-	fetchBrands();
-	$('#programmes').on('click', 'a', fetchLatestEpisode);
-	$('#episode').on('click', 'button', playTrack);
+app.controller('trackController', function ($scope, $rootScope, $http, $sce) {
+	$rootScope.$on('trackSelected', function(event, segment) {
+		var url = 'http://toma.hk/embed.php?disabled=[]&autoplay=true' + '&artist=' + encodeURIComponent(segment.artist) + '&title=' + encodeURIComponent(segment.title);
+		$scope.src = $sce.trustAsResourceUrl(url);
+	});
 });

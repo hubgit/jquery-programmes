@@ -4,8 +4,7 @@ li[itemscope] {
 	box-shadow: 0 1px 1px #ddd;
 	padding: 0.25rem;
 	border-radius: 1px;
-	margin-bottom: 0.25rem;
-	font-size: 1.2rem;
+	margin: 0.25rem 0;
 }
 
 li [itemprop=name] {
