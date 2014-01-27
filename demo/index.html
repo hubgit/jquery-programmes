@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>jQuery Programmes</title>
+
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="track.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="http://git.macropus.org/jquery-ajax-queue/jquery.ajaxQueue.js"></script>
+<script src="lib/handlebars.js"></script>
+<script src="../jquery.programmes.js"></script>
+<script src="demo.js"></script>
+
+<div id="status"></div>
+
+<div id="main">
+	<div id="programmes"></div>
+	<div id="episode"></div>
+</div>
+
+<script id="episode-template" type="text/x-handlebars-template">
+	<article itemscope itemtype="http://schema.org/Episode">
+		<div itemprop="name">{{ episode.display_title.title }}</div>
+		<div itemprop="name">{{ episode.display_title.subtitle }}</div>
+		<ol itemprop="tracklist" itemscope itemtype="http://schema.org/MusicPlaylist">
+			{{#each segment_events}}{{> segment}}{{/each}}
+		</ol>
+	</article>
+</script>
+
+
+<script id="segment-template" type="text/x-handlebars-template">
+	<li itemprop="track" itemscope itemtype="http://schema.org/MusicRecording">
+		<div itemprop="name">{{ segment.title }}</div>
+		<div itemprop="byArtist">{{ segment.artist }}</div>
+		{{#if segment.snippet_url}}
+		<div itemscope itemtype="http://schema.org/AudioObject">
+			<audio itemprop="contentUrl" src="{{ segment.snippet_url }}" type="audio/mp3"
+				controls preload="none"></audio>
+		</div>
+		{{/if}}
+	</li>
+</script>

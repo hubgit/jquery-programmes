@@ -1,0 +1,17 @@
+li[itemscope] {
+	color: #555;
+	border: 1px solid #ddd;
+	box-shadow: 0 1px 1px #ddd;
+	padding: 0.25rem;
+	border-radius: 1px;
+	margin-bottom: 0.25rem;
+	font-size: 1.2rem;
+}
+
+li [itemprop=name] {
+	color: #444;
+}
+
+li [itemprop=byArtist] {
+	color: #777;
+}
