@@ -26,7 +26,7 @@
 
 			<ol itemprop="playlist" itemscope itemtype="http://schema.org/MusicPlaylist">
 				<li itemprop="track" itemscope itemtype="http://schema.org/MusicRecording"
-					ng-repeat="segment_event in version.segment_events">
+					ng-repeat="segment_event in segments">
 					<div>
 						<button ng-click="trackSelected(segment_event.segment)">&#9654;</button>
 						<span itemprop="name">{{ segment_event.segment.title }}</span>

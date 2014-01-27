@@ -25,7 +25,7 @@ app.controller('episodeController', function ($scope, $rootScope, $resource) {
 	$rootScope.$on('programmeSelected', function(event, programme) {
 		$scope.player = null;
 		$scope.episode = null;
-		$scope.version = null;
+		$scope.segments = null;
 
 		//console.log('programme', programme);
 		var series = new Programme(programme);
@@ -45,9 +45,9 @@ app.controller('episodeController', function ($scope, $rootScope, $resource) {
 				// fetch version
 				version.$get().then(function(data) {
 					//console.log('version', data);
-					$scope.version = data.version;
+					$scope.segments = data.version.segment_events;
 
-					$rootScope.$broadcast('segmentsUpdated', data.version.segment_events);
+					//$rootScope.$broadcast('segmentsUpdated', data.version.segment_events);
 				});
 			});
 		});
@@ -60,7 +60,7 @@ app.controller('episodeController', function ($scope, $rootScope, $resource) {
 
 app.controller('trackController', function ($scope, $rootScope, $http, $sce) {
 	$rootScope.$on('trackSelected', function(event, segment) {
-		var url = 'http://toma.hk/embed.php?disabled=[]&autoplay=true' + '&artist=' + encodeURIComponent(segment.artist) + '&title=' + encodeURIComponent(segment.title);
+		var url = 'http://toma.hk/embed.php?disabled=[]&autoplay=true&artist=' + encodeURIComponent(segment.artist) + '&title=' + encodeURIComponent(segment.title);
 		$scope.src = $sce.trustAsResourceUrl(url);
 	});
 });
