@@ -61,7 +61,7 @@ $(function() {
 			player.pause();
 		}
 
-		player = window.tomahkAPI.Track(track.microdata('name', track.microdata('byArtist')), {
+		player = window.tomahkAPI.Track(track.microdata('name'), track.microdata('byArtist'), {
 		    width: 300,
 		    height: 300,
 		    disabledResolvers: [],
