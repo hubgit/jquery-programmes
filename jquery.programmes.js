@@ -15,7 +15,7 @@
 
  			var params = {
  				//url: 'http://open.live.bbc.co.uk/aps/programmes/' + path + '.json',
- 				url: 'http://bbc.co.uk/programmes/' + path + '.json',
+ 				url: 'http://www.bbc.co.uk/programmes/' + path + '.json',
  				dataType: 'json',
  				cache: true,
  			};
