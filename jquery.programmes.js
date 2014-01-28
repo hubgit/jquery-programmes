@@ -14,7 +14,8 @@
  			options = $.extend({ tries: 3 }, options);
 
  			var params = {
- 				url: 'http://open.live.bbc.co.uk/aps/programmes/' + path + '.json',
+ 				//url: 'http://open.live.bbc.co.uk/aps/programmes/' + path + '.json',
+ 				url: 'http://bbc.co.uk/programmes/' + path + '.json',
  				dataType: 'json',
  				cache: true,
  			};
